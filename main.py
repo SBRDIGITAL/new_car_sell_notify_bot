@@ -1,10 +1,15 @@
-import asyncio
+from sys import stdout
+from asyncio import run
+from logging import basicConfig, INFO as LOGGING_INFO
+
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 from app.config.config_reader import env_config
 
+
+basicConfig(level=LOGGING_INFO, stream=stdout)
 
 
 class NewCarSellNotifyBot:
@@ -86,6 +91,6 @@ async def main():
 
 if __name__ == '__main__':
     try:
-        asyncio.run(main())
+        run(main())
     except KeyboardInterrupt:
         print("Приложение остановлено пользователем.")
