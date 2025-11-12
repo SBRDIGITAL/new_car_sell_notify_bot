@@ -1,8 +1,11 @@
 import asyncio
+from logging import getLogger
 from typing import Optional, Union, Dict, List, Any
 
 from aiohttp import FormData, ClientSession, hdrs
 
+
+logger = getLogger(__name__)
 
 
 class AiohttpClient:
@@ -68,7 +71,7 @@ class AiohttpClient:
             for name, content in files.items():
                 data.add_field(name, content, filename=name)
 
-        print(f'{path=}')
+        logger.debug(f'Request path: {path}')
 
         # Отправка запроса
         async with self.session.request(
@@ -81,7 +84,7 @@ class AiohttpClient:
         ) as response:
             # Определение типа контента
             content_type = response.headers.get(hdrs.CONTENT_TYPE, "")
-            print(f'{response._url=}')
+            logger.debug(f'Response URL: {response._url}')
             # Обработка JSON
             if "application/json" in content_type:
                 return await response.json(), response.status, response.headers
@@ -165,17 +168,17 @@ if __name__ == "__main__":
             # Выполнение GET-запроса с params
             params = {'userId': '1'}  # Пример query-параметров
             content, status, headers = await client.get(path='/posts', params=params)
-            print('\nGET запрос с params')
-            print(f'\nContent: {content}')
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('GET запрос с params')
+            logger.info(f'Content: {content}')
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
             # Выполнение GET-запроса
             content, status, headers = await client.get(path='/posts/1')
-            print('\nGET запрос')
-            print(f'\nContent: {content}')
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('GET запрос')
+            logger.info(f'Content: {content}')
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
             # Выполнение POST-запроса
             data = {'title': 'foo', 'body':'bar', 'userId':1}  # Замените на ваши данные
@@ -183,10 +186,10 @@ if __name__ == "__main__":
                 path='/posts/', json=data,
                 headers={'Content-type':'application/json; charset=UTF-8'}
             )
-            print('\n\n\n\n\nPOST запрос')
-            print(f'\nContent: {content}')
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('POST запрос')
+            logger.info(f'Content: {content}')
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
             # Выполнение PATCH-запроса
             data = {'title': 'updated title'}  # Замените на ваши данные
@@ -194,10 +197,10 @@ if __name__ == "__main__":
                 path='/posts/1', json=data,
                 headers={'Content-type': 'application/json; charset=UTF-8'}
             )
-            print('\n\n\n\n\nPATCH запрос')
-            print(f'\nContent: {content}')
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('PATCH запрос')
+            logger.info(f'Content: {content}')
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
             # Выполнение PUT-запроса
             # Замените на ваши данные
@@ -206,17 +209,17 @@ if __name__ == "__main__":
                 path='/posts/1', json=data,
                 headers={'Content-type': 'application/json; charset=UTF-8'}
             )
-            print('\n\n\n\n\nPUT запрос')
-            print(f'\nContent: {content}')
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('PUT запрос')
+            logger.info(f'Content: {content}')
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
             # Выполнение DELETE-запроса
             content, status, headers = await client.delete(path='/posts/1')
-            print('\n\n\n\n\nDELETE запрос')
-            print(f'\nContent: {content}')  # Обычно для DELETE запросов контент пустой
-            print(f'\nStatus: {status}')
-            print(f'\nHeaders: {headers}')
+            logger.info('DELETE запрос')
+            logger.info(f'Content: {content}')  # Обычно для DELETE запросов контент пустой
+            logger.info(f'Status: {status}')
+            logger.info(f'Headers: {headers}')
 
     # Запуск асинхронной функции
     asyncio.run(main())

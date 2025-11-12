@@ -1,6 +1,10 @@
+from logging import getLogger
+
 from .notify_api_poller import NotifyApiPoller
 from ...schemas.notify import NewCarNotify
 
+
+logger = getLogger(__name__)
 
 
 class NotifyApiPollerTest(NotifyApiPoller):
@@ -95,10 +99,10 @@ class NotifyApiPollerTest(NotifyApiPoller):
                 try:
                     result = await method()
                     data, status, header = result
-                    print(f"Ответ сервера: {result}")
-                    print(f'{data=}\n\n{status=}\n\n{header=}')
+                    logger.info(f"Ответ сервера от {method.__name__}: {result}")
+                    logger.debug(f'data={data}, status={status}, header={header}')
                 except Exception as e:
-                    print(f"Ошибка при выполнении {method.__name__}: {e}")
+                    logger.error(f"Ошибка при выполнении {method.__name__}: {e}", exc_info=True)
                     raise e
 
 

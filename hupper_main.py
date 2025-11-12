@@ -13,13 +13,15 @@
 
 import sys
 from asyncio import run
-from logging import INFO, basicConfig
-from traceback import print_exc
+from logging import INFO, basicConfig, getLogger
 
 from hupper import is_active, start_reloader
 
 from app.config.config_reader import env_config
 from main import main as bot_main
+
+
+logger = getLogger(__name__)
 
 
 def setup_logging():
@@ -56,11 +58,10 @@ async def main():
         await bot_main()
         
     except KeyboardInterrupt:
-        print('Работа бота завершена по нажатию на Ctrl+C')
+        logger.info('Работа бота завершена по нажатию на Ctrl+C')
         
-    except Exception:
-        print('Критическая ошибка при работе бота:')
-        print_exc()
+    except Exception as e:
+        logger.critical('Критическая ошибка при работе бота', exc_info=e)
 
 
 if __name__ == '__main__':

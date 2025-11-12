@@ -1,6 +1,6 @@
 from sys import stdout
 from asyncio import run
-from logging import basicConfig, INFO as LOGGING_INFO
+from logging import basicConfig, INFO as LOGGING_INFO, getLogger
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
@@ -12,6 +12,7 @@ from app.modules.notify.notify_scheduler import get_notify_scheduler
 
 
 basicConfig(level=LOGGING_INFO, stream=stdout)
+logger = getLogger(__name__)
 
 
 
@@ -74,12 +75,12 @@ class NewCarSellNotifyBot:
             await self.bot.delete_webhook(drop_pending_updates=True)
             await self.dp.start_polling(self.bot)
         except KeyboardInterrupt:
-            print("Получен сигнал остановки...")
+            logger.info("Получен сигнал остановки...")
         finally:
             # Останавливаем планировщик перед закрытием бота
             self.scheduler.stop()
             await self.bot.session.close()
-            print("Бот остановлен.")
+            logger.info("Бот остановлен.")
 
     async def run(self):
         """
@@ -114,4 +115,4 @@ if __name__ == '__main__':
     try:
         run(main())
     except KeyboardInterrupt:
-        print("Приложение остановлено пользователем.")
+        logger.info("Приложение остановлено пользователем.")
