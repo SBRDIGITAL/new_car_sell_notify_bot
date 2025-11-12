@@ -8,8 +8,12 @@ from aiogram.client.default import DefaultBotProperties
 
 from app.config.config_reader import env_config
 
+from app.modules.notify_api.notify_api_poller import notify_api_poller
+
+
 
 basicConfig(level=LOGGING_INFO, stream=stdout)
+
 
 
 class NewCarSellNotifyBot:
@@ -39,6 +43,12 @@ class NewCarSellNotifyBot:
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         self.dp = Dispatcher()
+
+    async def __run_notify_api_tests(self):
+        """ ## Запускает тест методов API уведомлений. """
+        from app.modules.notify_api.notify_api_poller_test \
+            import notify_api_poller_test
+        await notify_api_poller_test.run_methods()
 
     async def start_up_polling(self):
         """Запускает polling бота в асинхронном режиме.
@@ -73,6 +83,7 @@ class NewCarSellNotifyBot:
             Exception: Любые исключения, возникшие при работе бота, будут
                       переданы вызывающему коду для обработки.
         """
+        await self.__run_notify_api_tests()
         await self.start_up_polling()
 
 

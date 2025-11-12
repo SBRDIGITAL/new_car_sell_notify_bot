@@ -13,7 +13,7 @@ class NewCarNotify(BaseModel):
     Attributes:
         advert_url (pydantic.HttpUrl): Ссылка на объявление.
         analytics (str): Аналитика о продаже в текстовом виде.
-        seller_phone (PhoneNumber): Номер телефона продавца.
+        seller_phone (PhoneNumber): Номер телефона продавца `в международном формате`.
     """    
     advert_url: HttpUrl
     analytics: str
