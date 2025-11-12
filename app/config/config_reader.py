@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     """
     # Bot
     bot_token: SecretStr = Field(SecretStr(''), env="BOT_TOKEN")
-    admins_tg_ids: str = Field('', env="ADMIN_TG_IDS")
+    admins_tg_ids: str = Field('', env="ADMINS_TG_IDS")
 
     # Notify API
     notify_api_host: str = Field("localhost", env="NOTIFY_API_HOST")
@@ -47,15 +47,14 @@ class Settings(BaseSettings):
         # можно добавить другие опции при необходимости
     )
 
-    @classmethod
-    def check_bot_token(cls):
+    def check_bot_token(self):
         """
         ## Проверяет наличие токена бота.
 
         Raises:
             ValueError: Ошибка, если не указан токен бота.
         """        
-        if not cls.bot_token.get_secret_value():
+        if not self.bot_token.get_secret_value():
             raise ValueError('Не указан токен бота, обратитесь к @BotFather')
 
     @property
