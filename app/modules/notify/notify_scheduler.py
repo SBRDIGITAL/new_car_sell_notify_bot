@@ -6,7 +6,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
 from .notify_api_poller import notify_api_poller
-from ...schemas.notify import NewCarNotifyListResponse
 
 
 logger = getLogger(__name__)
@@ -38,33 +37,15 @@ class NotifyScheduler:
         ## Получает новые уведомления и обрабатывает их.
         
         Метод вызывается планировщиком с заданным интервалом.
-        Получает новые уведомления из API и обрабатывает их.
+        Получает новые уведомления из API и отправляет их администраторам.
         
         :raises Exception: При ошибках работы с API или отправки сообщений.
         """
         try:
             async with notify_api_poller:
-                data, status, headers = await notify_api_poller._get_new_notifies()
-                
-                if status == 200 and data:
-                    # Парсим ответ с помощью Pydantic модели
-                    notify_list = NewCarNotifyListResponse.model_validate(data)
-                    
-                    if notify_list.data:
-                        logger.info(f"Получено {len(notify_list.data)} новых уведомлений")
-                        
-                        for notify in notify_list.data:
-                            # Здесь можно добавить логику отправки уведомлений пользователям
-                            logger.info(
-                                f"Новое уведомление: "
-                                f"URL={notify.advert_url}, "
-                                f"Телефон={notify.seller_phone}"
-                            )
-                            # TODO: Добавить отправку уведомлений через bot
-                    else:
-                        logger.debug("Новых уведомлений не найдено")
-                else:
-                    logger.warning(f"Ошибка получения уведомлений: статус {status}")
+                # Используем метод get_new_notifies, который автоматически
+                # отправляет уведомления администраторам через AdminNotifyService
+                await notify_api_poller.get_new_notifies(self.bot)
                     
         except Exception as e:
             logger.error(f"Ошибка при получении уведомлений: {e}", exc_info=True)

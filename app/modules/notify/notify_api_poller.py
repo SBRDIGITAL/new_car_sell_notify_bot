@@ -2,8 +2,11 @@ from logging import getLogger
 
 from aiogram import Bot
 
+from app.modules.notify.admin_notify import AdminNotifyService
+
 from .notify_api_client import NotifyApiClient
 from ...schemas.notify import NewCarNotifyListResponse
+
 
 
 logger = getLogger(__name__)
@@ -47,21 +50,12 @@ class NotifyApiPoller(NotifyApiClient):
                 if notify_list.data:
                     logger.info(f"Получено {len(notify_list.data)} новых уведомлений")
                     
+                    # Инициализируем сервис уведомлений администраторов
+                    admin_notify_service = AdminNotifyService(bot)
+                    
+                    # Отправляем уведомления администраторам о каждом новом объявлении
                     for notify in notify_list.data:
-                        # Формируем сообщение для отправки
-                        message = (
-                            f"🚗 <b>Новое объявление о продаже автомобиля</b>\n\n"
-                            f"📊 <b>Аналитика:</b>\n{notify.analytics}\n\n"
-                            f"📱 <b>Телефон продавца:</b> {notify.seller_phone}\n"
-                            f"🔗 <b>Ссылка:</b> {notify.advert_url}"
-                        )
-                        
-                        # TODO: Добавить логику определения получателей (chat_id)
-                        # Пока логируем, позже нужно добавить отправку конкретным пользователям
-                        logger.info(f"Новое уведомление: {message}")
-                        
-                        # Пример отправки (раскомментировать когда будет настроена логика получателей):
-                        # await bot.send_message(chat_id=ADMIN_CHAT_ID, text=message)
+                        await admin_notify_service.notify_admins(notify)
                 else:
                     logger.debug("Новых уведомлений не найдено")
             else:

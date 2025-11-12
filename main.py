@@ -7,7 +7,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 from app.config.config_reader import env_config
-from app.modules.notify_api.notify_scheduler import get_notify_scheduler
+from app.modules.notify.notify_scheduler import get_notify_scheduler
 
 
 
@@ -16,7 +16,8 @@ basicConfig(level=LOGGING_INFO, stream=stdout)
 
 
 class NewCarSellNotifyBot:
-    """Бот для уведомлений о продаже новых автомобилей.
+    """
+    ## Бот для уведомлений о продаже новых автомобилей.
     
     Класс представляет собой Telegram-бота, который использует библиотеку aiogram
     для работы с Telegram Bot API. Бот предназначен для отправки уведомлений
@@ -28,7 +29,8 @@ class NewCarSellNotifyBot:
     """
 
     def __init__(self):
-        """Инициализирует экземпляр бота для уведомлений о продаже автомобилей.
+        """
+        ## Инициализирует экземпляр бота для уведомлений о продаже автомобилей.
         
         Создает экземпляр Bot с токеном из конфигурации и настройками по умолчанию,
         а также инициализирует Dispatcher для обработки сообщений.
@@ -46,12 +48,13 @@ class NewCarSellNotifyBot:
 
     async def __run_notify_api_tests(self):
         """ ## Запускает тест методов API уведомлений. """
-        from app.modules.notify_api.notify_api_poller_test \
+        from app.modules.notify.notify_api_poller_test \
             import notify_api_poller_test
         await notify_api_poller_test.run_methods()
 
     async def start_up_polling(self):
-        """Запускает polling бота в асинхронном режиме.
+        """
+        ## Запускает polling бота в асинхронном режиме.
         
         Метод удаляет webhook (если он был установлен) и запускает длительное 
         соединение (long polling) для получения обновлений от Telegram.
@@ -79,7 +82,8 @@ class NewCarSellNotifyBot:
             print("Бот остановлен.")
 
     async def run(self):
-        """Основной метод для запуска бота.
+        """
+        ## Основной метод для запуска бота.
         
         Запускает бота в режиме polling и обеспечивает его работу до получения
         сигнала остановки. Является точкой входа для запуска всех функций бота.
@@ -93,7 +97,8 @@ class NewCarSellNotifyBot:
 
 
 async def main():
-    """Точка входа в приложение.
+    """
+    ## Точка входа в приложение.
     
     Создает экземпляр бота для уведомлений о продаже автомобилей и запускает его.
     Функция служит основной асинхронной точкой входа для всего приложения.
