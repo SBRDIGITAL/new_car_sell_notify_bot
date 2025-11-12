@@ -7,8 +7,7 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 from app.config.config_reader import env_config
-
-from app.modules.notify_api.notify_api_poller import notify_api_poller
+from app.modules.notify_api.notify_scheduler import get_notify_scheduler
 
 
 
@@ -43,6 +42,7 @@ class NewCarSellNotifyBot:
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
         self.dp = Dispatcher()
+        self.scheduler = get_notify_scheduler(self.bot, interval_seconds=1)
 
     async def __run_notify_api_tests(self):
         """ ## Запускает тест методов API уведомлений. """
@@ -65,11 +65,16 @@ class NewCarSellNotifyBot:
             Метод блокирующий и будет выполняться до получения сигнала остановки.
         """        
         try:
+            # Запускаем планировщик для получения уведомлений
+            self.scheduler.start()
+            
             await self.bot.delete_webhook(drop_pending_updates=True)
             await self.dp.start_polling(self.bot)
         except KeyboardInterrupt:
             print("Получен сигнал остановки...")
         finally:
+            # Останавливаем планировщик перед закрытием бота
+            self.scheduler.stop()
             await self.bot.session.close()
             print("Бот остановлен.")
 
